@@ -10,9 +10,12 @@ jobs:
       - name: Get code
         uses: actions/checkout@v3
       - name: Cache Dependencies
+        id: cache
         uses: ./.github/actions/cache-dep
         with:
           caching: 'false'
+      - name: Display Caching Output
+        run: echo "${{ steps.cache.outputs.cache-dep }}"
       - name: Lint code
         run: npm run lint
   test:
@@ -21,9 +24,12 @@ jobs:
       - name: Get code
         uses: actions/checkout@v3
       - name: Cache Dependencies
+        id: cache
         uses: ./.github/actions/cache-dep
         with:
           caching: 'true'
+      - name: Display Caching Output
+        run: echo "${{ steps.cache.outputs.cache-dep }}"
       - name: Test code
         id: run-tests
         run: npm run test
@@ -39,12 +45,15 @@ jobs:
     steps:
       - name: Get code
         uses: actions/checkout@v3
+      - name: Build website
+        run: npm run build
       - name: Cache Dependencies
+        id: cache
         uses: ./.github/actions/cache-dep
         with:
           caching: 'true'
-      - name: Build website
-        run: npm run build
+      - name: Display Cache Output
+        run: echo "${{ steps.cache.outputs.cache-dep }}"
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:

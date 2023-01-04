@@ -1,10 +1,14 @@
-name: Cache Action
-description: Cache npm dependencies
+name: Cache Dependencies
+description: Action for caching dependencies
 inputs:
   caching:
-    description: Indicator for caching
+    description: Caching indicator
     required: true
     default: 'true'
+outputs:
+  cached-dep:
+    description: Indicates whether dependencies were cached or not
+    value: ${{ steps.install.outputs.cache-dep }}
 runs:
   using: composite
   steps:
@@ -16,6 +20,9 @@ runs:
         path: node_modules
         key: node-modules-${{ hashFiles('**/package-lock.json') }}
     - name: Install Dependencies
+      id: install
       if: steps.cache.outputs.cache-hit != 'true' || inputs.caching != 'true'
-      run: npm ci
+      run: |
+        npm ci
+        echo "cache-dep=${{ inputs.caching }}" >> $GITHUB_OUTPUTS
       shell: bash
